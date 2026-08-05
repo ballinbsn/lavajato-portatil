@@ -35,7 +35,7 @@ async function createPixCharge({ orderId, amountInCents, description, customer, 
       },
       expires_in: 3600,
       webhook_url: webhookUrl || process.env.PINPAY_WEBHOOK_URL,
-      metadata: { order_id: orderId }
+      metadata: { external_reference: orderId }
     }),
     signal: AbortSignal.timeout(30000)
   });
