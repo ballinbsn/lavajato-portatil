@@ -9,10 +9,13 @@ app.set('trust proxy', true); // Railway fica atrás de proxy — precisa disso 
 app.use(cors());
 
 // Preços definidos no servidor (nunca confie no valor vindo do front-end)
+// Valores em múltiplos de 100 centavos: a PinPay arredonda pra cima
+// centavos "quebrados" (ex: 12591 virava 12600), então já fixamos redondo
+// aqui pra bater exatamente com o que aparece na página.
 const KITS = {
-  '1': { label: '1 Unidade', valueInCents: 7191 },
-  '2': { label: '2 Unidades', valueInCents: 12591 },
-  '3': { label: '3 Unidades', valueInCents: 17091 }
+  '1': { label: '1 Unidade', valueInCents: 7200 },
+  '2': { label: '2 Unidades', valueInCents: 12600 },
+  '3': { label: '3 Unidades', valueInCents: 17100 }
 };
 
 // pedidos em memória, indexados pelo id da transação retornado pela PinPay
@@ -68,8 +71,6 @@ app.post('/api/pix/create', async (req, res) => {
       checkoutUrl
     });
 
-    console.log('DEBUG pix response:', JSON.stringify(pix));
-
     orders.set(pix.id, {
       orderId,
       kitId,
@@ -82,9 +83,9 @@ app.post('/api/pix/create', async (req, res) => {
 
     res.json({
       transactionId: pix.id,
-      qrCode: pix.qr_code,
-      qrCodeUrl: pix.qr_code_url,
-      expiresAt: pix.expires_at,
+      qrCode: pix.pix.qr_code,
+      qrCodeUrl: pix.pix.qr_code_url,
+      expiresAt: pix.pix.expires_at,
       status: pix.status,
       valueInCents: kit.valueInCents
     });
