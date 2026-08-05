@@ -29,7 +29,7 @@
   setInterval(tick, 1000);
 
   // ---- Seleção de kit ----
-  let selectedKit = { id: '2', price: 125.91, old: 159.80 };
+  let selectedKit = { id: '2', price: 126.00, old: 159.80 };
   const selectedPriceEl = document.getElementById('selectedPrice');
   const stickyPriceEl = document.getElementById('stickyPrice');
   const modalKitSummary = document.getElementById('modalKitSummary');
