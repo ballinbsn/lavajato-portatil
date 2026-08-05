@@ -29,7 +29,7 @@
   setInterval(tick, 1000);
 
   // ---- Seleção de kit ----
-  let selectedKit = { id: '2', price: 126.00, old: 159.80 };
+  let selectedKit = { id: '1', price: 72.00, old: 79.90 };
   const selectedPriceEl = document.getElementById('selectedPrice');
   const stickyPriceEl = document.getElementById('stickyPrice');
   const summaryKitLabel = document.getElementById('summaryKitLabel');
@@ -320,9 +320,12 @@
     const el = document.getElementById('pixTimerValue');
     function update() {
       const remaining = Math.max(0, target - Date.now());
-      const m = Math.floor(remaining / 60000);
+      const h = Math.floor(remaining / 3600000);
+      const m = Math.floor((remaining % 3600000) / 60000);
       const s = Math.floor((remaining % 60000) / 1000);
-      el.textContent = `${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
+      el.textContent = h > 0
+        ? `${h}h ${String(m).padStart(2, '0')}min`
+        : `${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
       if (remaining <= 0) {
         stopPixCountdown();
         el.textContent = 'expirado';

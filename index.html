@@ -61,6 +61,47 @@
           <li>✅ Frete grátis + garantia de 3 meses</li>
         </ul>
 
+        <p class="kits-label">Quantas unidades você quer?</p>
+        <div class="kits" id="kits">
+          <label class="kit-option" data-kit="1" data-price="72.00" data-old="79.90">
+            <input type="radio" name="kit" value="1" checked>
+            <div class="kit-option__body">
+              <strong>1 Unidade</strong>
+              <span class="muted">Ideal pra experimentar</span>
+            </div>
+            <div class="kit-option__price">
+              <span class="old">R$ 79,90</span>
+              <span class="new">R$ 72,00</span>
+            </div>
+          </label>
+
+          <label class="kit-option kit-option--best" data-kit="2" data-price="126.00" data-old="159.80">
+            <input type="radio" name="kit" value="2">
+            <span class="tag">MAIS VENDIDO</span>
+            <div class="kit-option__body">
+              <strong>2 Unidades</strong>
+              <span class="muted">Leve para casa e o carro</span>
+            </div>
+            <div class="kit-option__price">
+              <span class="old">R$ 159,80</span>
+              <span class="new">R$ 126,00</span>
+            </div>
+          </label>
+
+          <label class="kit-option" data-kit="3" data-price="171.00" data-old="239.70">
+            <input type="radio" name="kit" value="3">
+            <span class="tag tag--alt">MELHOR PREÇO</span>
+            <div class="kit-option__body">
+              <strong>3 Unidades</strong>
+              <span class="muted">Kit família / presenteie alguém</span>
+            </div>
+            <div class="kit-option__price">
+              <span class="old">R$ 239,70</span>
+              <span class="new">R$ 171,00</span>
+            </div>
+          </label>
+        </div>
+
         <a href="#oferta" class="btn btn--primary btn--full">🛒 Comprar com PIX agora</a>
         <p class="secure-note">🔒 Pagamento processado com segurança via PIX. Aprovação instantânea.</p>
       </div>
@@ -161,7 +202,7 @@
   <section id="oferta" class="section offer">
     <div class="container container--narrow">
       <h2 class="center">🛡️ Garanta a sua agora</h2>
-      <p class="center muted">Escolha seu kit e pague com PIX — aprovação na hora, sem burocracia.</p>
+      <p class="center muted">Pague com PIX — aprovação na hora, sem burocracia.</p>
 
       <div class="countdown" id="countdown">
         <span>Oferta acaba em</span>
@@ -172,48 +213,8 @@
         </div>
       </div>
 
-      <div class="kits" id="kits">
-        <label class="kit-option" data-kit="1" data-price="72.00" data-old="79.90">
-          <input type="radio" name="kit" value="1">
-          <div class="kit-option__body">
-            <strong>1 Unidade</strong>
-            <span class="muted">Ideal pra experimentar</span>
-          </div>
-          <div class="kit-option__price">
-            <span class="old">R$ 79,90</span>
-            <span class="new">R$ 72,00</span>
-          </div>
-        </label>
-
-        <label class="kit-option kit-option--best" data-kit="2" data-price="126.00" data-old="159.80">
-          <input type="radio" name="kit" value="2" checked>
-          <span class="tag">MAIS VENDIDO</span>
-          <div class="kit-option__body">
-            <strong>2 Unidades</strong>
-            <span class="muted">Leve para casa e o carro</span>
-          </div>
-          <div class="kit-option__price">
-            <span class="old">R$ 159,80</span>
-            <span class="new">R$ 126,00</span>
-          </div>
-        </label>
-
-        <label class="kit-option" data-kit="3" data-price="171.00" data-old="239.70">
-          <input type="radio" name="kit" value="3">
-          <span class="tag tag--alt">MELHOR PREÇO</span>
-          <div class="kit-option__body">
-            <strong>3 Unidades</strong>
-            <span class="muted">Kit família / presenteie alguém</span>
-          </div>
-          <div class="kit-option__price">
-            <span class="old">R$ 239,70</span>
-            <span class="new">R$ 171,00</span>
-          </div>
-        </label>
-      </div>
-
       <button id="openCheckout" class="btn btn--primary btn--full btn--large">
-        💠 Pagar com PIX — <span id="selectedPrice">R$ 126,00</span>
+        💠 Pagar com PIX — <span id="selectedPrice">R$ 72,00</span>
       </button>
 
       <div class="trust-row">
@@ -261,7 +262,7 @@
 <div class="sticky-cta">
   <div>
     <span class="muted">no PIX</span>
-    <strong id="stickyPrice">R$ 126,00</strong>
+    <strong id="stickyPrice">R$ 72,00</strong>
   </div>
   <a href="#oferta" class="btn btn--primary">Comprar</a>
 </div>
@@ -281,10 +282,10 @@
     <div class="order-summary">
       <img src="https://files.nuvorafy.com/user-images/34fcbfd7-2e73-4c67-aaae-ef889d0d6a60/1784511082696-xu5cubjmk3r.webp" alt="">
       <div class="order-summary__info">
-        <strong id="summaryKitLabel">2 Unidades</strong>
+        <strong id="summaryKitLabel">1 Unidade</strong>
         <span class="muted">Lavadora de Alta Pressão 48V</span>
       </div>
-      <strong id="summaryPrice">R$ 126,00</strong>
+      <strong id="summaryPrice">R$ 72,00</strong>
     </div>
 
     <!-- STEP 1: contato -->
@@ -354,17 +355,20 @@
 
       <div class="pix-box">
         <div class="pix-timer" id="pixTimer">Código expira em <strong id="pixTimerValue">15:00</strong></div>
-        <img id="pixQrImage" src="" alt="QR Code PIX">
-        <div class="pix-copy">
-          <input type="text" id="pixCopyPaste" readonly>
-          <button id="copyPixBtn" class="btn btn--secondary">Copiar código</button>
-        </div>
-        <p class="pix-value">Valor: <strong id="pixValue">R$ 0,00</strong></p>
+        <p class="pix-value">Valor a pagar: <strong id="pixValue">R$ 0,00</strong></p>
+
+        <button type="button" id="copyPixBtn" class="btn btn--primary btn--full btn--large">📋 Copiar código Pix</button>
+        <input type="text" id="pixCopyPaste" class="pix-copy-input" readonly>
+
+        <details class="pix-qr-toggle">
+          <summary>ou escaneie o QR Code</summary>
+          <img id="pixQrImage" src="" alt="QR Code PIX">
+        </details>
 
         <ol class="pix-instructions">
-          <li>Abra o app do seu banco</li>
-          <li>Escolha pagar via Pix com QR Code ou copia e cola</li>
-          <li>Confirme o pagamento — a aprovação é automática</li>
+          <li>Copie o código (ou escaneie o QR Code)</li>
+          <li>Abra o app do seu banco e escolha pagar via Pix</li>
+          <li>Cole o código e confirme — a aprovação é automática</li>
         </ol>
 
         <p class="pix-status" id="pixStatus"><span class="pulse-dot"></span> Aguardando pagamento...</p>
