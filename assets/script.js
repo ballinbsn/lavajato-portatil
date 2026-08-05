@@ -296,12 +296,21 @@
 
   async function checkStatusNow(transactionId) {
     const btn = document.getElementById('checkNowBtn');
+    const statusEl = document.getElementById('pixStatus');
     btn.disabled = true;
     btn.textContent = 'Verificando...';
     try {
       const res = await fetch(`/api/pix/status/${transactionId}`);
       const data = await res.json();
-      if (data.status === 'paid') markAsPaid(transactionId);
+      if (res.ok && data.status === 'paid') {
+        markAsPaid(transactionId);
+      } else {
+        statusEl.innerHTML = '<span class="pulse-dot"></span> Ainda não identificamos o pagamento — pode levar alguns segundos após confirmar no banco';
+        setTimeout(() => { if (!statusEl.classList.contains('paid')) setPixStatus(false); }, 4000);
+      }
+    } catch (err) {
+      statusEl.innerHTML = '<span class="pulse-dot"></span> Não conseguimos verificar agora — tente de novo em instantes';
+      setTimeout(() => { if (!statusEl.classList.contains('paid')) setPixStatus(false); }, 4000);
     } finally {
       btn.disabled = false;
       btn.textContent = 'Já paguei — verificar agora';
