@@ -1,4 +1,11 @@
 (function () {
+  // Quando a página é hospedada em outro domínio (ex: Hostinger) sem o
+  // backend Node junto, as chamadas de API precisam apontar pro Railway,
+  // que é quem processa o PIX de verdade.
+  const API_BASE = location.hostname.endsWith('railway.app')
+    ? ''
+    : 'https://lavajato-portatil-production.up.railway.app';
+
   const money = (n) => n.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
 
   // ---- Galeria ----
@@ -237,7 +244,7 @@
     const customer = { ...contact, ...address };
 
     try {
-      const res = await fetch('/api/pix/create', {
+      const res = await fetch(`${API_BASE}/api/pix/create`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ kitId: selectedKit.id, customer })
@@ -285,7 +292,7 @@
     stopPolling();
     pollTimer = setInterval(async () => {
       try {
-        const res = await fetch(`/api/pix/status/${transactionId}`);
+        const res = await fetch(`${API_BASE}/api/pix/status/${transactionId}`);
         const data = await res.json();
         if (data.status === 'paid') markAsPaid(transactionId);
       } catch (err) {
@@ -300,7 +307,7 @@
     btn.disabled = true;
     btn.textContent = 'Verificando...';
     try {
-      const res = await fetch(`/api/pix/status/${transactionId}`);
+      const res = await fetch(`${API_BASE}/api/pix/status/${transactionId}`);
       const data = await res.json();
       if (res.ok && data.status === 'paid') {
         markAsPaid(transactionId);
