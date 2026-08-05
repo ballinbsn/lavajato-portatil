@@ -2,6 +2,7 @@ require('dotenv').config();
 const crypto = require('node:crypto');
 const express = require('express');
 const cors = require('cors');
+const QRCode = require('qrcode');
 const { createPixCharge, getPixStatus } = require('./pinpay');
 
 const app = express();
@@ -81,10 +82,15 @@ app.post('/api/pix/create', async (req, res) => {
       createdAt: Date.now()
     });
 
+    // pix.pix.qr_code_url exige o Bearer token da PinPay pra ser acessada
+    // (retorna 401 direto no navegador) — geramos a imagem do QR aqui mesmo
+    // a partir do código copia-e-cola, que já é público.
+    const qrCodeImage = await QRCode.toDataURL(pix.pix.qr_code, { margin: 1, width: 400 });
+
     res.json({
       transactionId: pix.id,
       qrCode: pix.pix.qr_code,
-      qrCodeUrl: pix.pix.qr_code_url,
+      qrCodeUrl: qrCodeImage,
       expiresAt: pix.pix.expires_at,
       status: pix.status,
       valueInCents: kit.valueInCents
