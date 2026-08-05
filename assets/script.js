@@ -102,7 +102,7 @@
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || 'Falha ao gerar PIX');
 
-      document.getElementById('pixQrImage').src = data.qrCodeBase64;
+      document.getElementById('pixQrImage').src = data.qrCodeUrl;
       document.getElementById('pixCopyPaste').value = data.qrCode;
       document.getElementById('pixValue').textContent = money(data.valueInCents / 100);
       document.getElementById('pixStatus').textContent = '⏳ Aguardando pagamento...';

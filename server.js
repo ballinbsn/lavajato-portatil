@@ -1,13 +1,11 @@
 require('dotenv').config();
-const path = require('path');
+const crypto = require('node:crypto');
 const express = require('express');
 const cors = require('cors');
-const { createPixCharge, getPixStatus } = require('./pushinpay');
+const { createPixCharge, getPixStatus } = require('./pinpay');
 
 const app = express();
 app.use(cors());
-app.use(express.json());
-app.use(express.static(__dirname));
 
 // Preços definidos no servidor (nunca confie no valor vindo do front-end)
 const KITS = {
@@ -16,8 +14,39 @@ const KITS = {
   '3': { label: '3 Unidades', valueInCents: 17091 }
 };
 
-// order em memória: id da transação -> pedido
+// pedidos em memória, indexados pelo id da transação retornado pela PinPay
 const orders = new Map();
+
+// Rota do webhook precisa vir ANTES do express.json() global: a assinatura HMAC
+// é calculada sobre os bytes crus do corpo, então usamos express.raw só aqui.
+app.post('/api/pix/webhook', express.raw({ type: 'application/json' }), (req, res) => {
+  const sig = req.headers['x-webhook-signature'];
+  const secret = process.env.PINPAY_WEBHOOK_SECRET;
+  if (!sig || !secret) return res.status(401).end();
+
+  const expected = 'sha256=' + crypto
+    .createHmac('sha256', secret)
+    .update(req.body)
+    .digest('hex');
+
+  const sigBuf = Buffer.from(sig);
+  const expectedBuf = Buffer.from(expected);
+  const valid = sigBuf.length === expectedBuf.length && crypto.timingSafeEqual(sigBuf, expectedBuf);
+  if (!valid) return res.status(401).end();
+
+  const { event, data } = JSON.parse(req.body.toString('utf8'));
+  const order = orders.get(data.transaction_id);
+  if (order) {
+    order.status = data.status;
+    order.event = event;
+  }
+
+  console.log(`Webhook PinPay: ${event} — transação ${data.transaction_id} — status ${data.status}`);
+  res.status(200).end();
+});
+
+app.use(express.json());
+app.use(express.static(__dirname));
 
 app.post('/api/pix/create', async (req, res) => {
   try {
@@ -28,53 +57,56 @@ app.post('/api/pix/create', async (req, res) => {
       return res.status(400).json({ error: 'Dados do cliente incompletos' });
     }
 
-    const charge = await createPixCharge({ valueInCents: kit.valueInCents });
+    const orderId = crypto.randomUUID();
+    const pix = await createPixCharge({
+      orderId,
+      amountInCents: kit.valueInCents,
+      description: `${kit.label} — Lavadora de Alta Pressão Sem Fio 48V Premium`,
+      customer
+    });
 
-    orders.set(charge.id, {
+    orders.set(pix.id, {
+      orderId,
       kitId,
       kit: kit.label,
       valueInCents: kit.valueInCents,
       customer,
-      status: charge.status || 'created',
+      status: pix.status,
       createdAt: Date.now()
     });
 
     res.json({
-      transactionId: charge.id,
-      qrCode: charge.qr_code,
-      qrCodeBase64: charge.qr_code_base64,
-      status: charge.status,
+      transactionId: pix.id,
+      qrCode: pix.qr_code,
+      qrCodeUrl: pix.qr_code_url,
+      expiresAt: pix.expires_at,
+      status: pix.status,
       valueInCents: kit.valueInCents
     });
   } catch (err) {
-    console.error('Erro ao criar cobrança PIX:', err.response?.data || err.message);
-    res.status(500).json({ error: 'Não foi possível gerar o PIX. Tente novamente.' });
+    console.error('Erro ao criar cobrança PIX:', err.status, err.details || err.message);
+    res.status(502).json({ error: 'Não foi possível gerar o PIX. Tente novamente.' });
   }
 });
 
 app.get('/api/pix/status/:id', async (req, res) => {
+  const { id } = req.params;
+  const local = orders.get(id);
+
+  // O webhook já mantém o status local atualizado em tempo real — só
+  // consultamos a PinPay direto se ainda não recebemos nenhum evento.
+  if (local && local.event) {
+    return res.json({ status: local.status });
+  }
+
   try {
-    const { id } = req.params;
-    const local = orders.get(id);
-
-    const remote = await getPixStatus(id);
-    if (local) local.status = remote.status;
-
-    res.json({ status: remote.status });
+    const pix = await getPixStatus(id);
+    if (local) local.status = pix.status;
+    res.json({ status: pix.status });
   } catch (err) {
-    console.error('Erro ao consultar status PIX:', err.response?.data || err.message);
-    res.status(500).json({ error: 'Não foi possível consultar o status do pagamento.' });
+    console.error('Erro ao consultar status PIX:', err.status, err.message);
+    res.status(502).json({ error: 'Não foi possível consultar o status do pagamento.' });
   }
-});
-
-// A PushinPay chama essa URL quando o status do pagamento muda
-app.post('/api/pix/webhook', (req, res) => {
-  const { id, status } = req.body || {};
-  if (id && orders.has(id)) {
-    orders.get(id).status = status;
-    console.log(`Pedido ${id} atualizado para status: ${status}`);
-  }
-  res.sendStatus(200);
 });
 
 const PORT = process.env.PORT || 3000;
