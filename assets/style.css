@@ -51,7 +51,7 @@ p { margin: 0 0 1em; }
   justify-content: space-between;
   padding: 14px 20px;
 }
-.logo { font-weight: 700; font-size: 18px; }
+.logo { height: 44px; width: auto; }
 
 .btn {
   display: inline-flex;
