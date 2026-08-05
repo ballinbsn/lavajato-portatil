@@ -14,7 +14,7 @@ app.use(cors());
 // centavos "quebrados" (ex: 12591 virava 12600), então já fixamos redondo
 // aqui pra bater exatamente com o que aparece na página.
 const KITS = {
-  '1': { label: '1 Unidade', valueInCents: 7200 },
+  '1': { label: '1 Unidade', valueInCents: 7990 },
   '2': { label: '2 Unidades', valueInCents: 12600 },
   '3': { label: '3 Unidades', valueInCents: 17100 }
 };

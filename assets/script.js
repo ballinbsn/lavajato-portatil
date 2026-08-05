@@ -29,7 +29,7 @@
   setInterval(tick, 1000);
 
   // ---- Seleção de kit ----
-  let selectedKit = { id: '1', price: 72.00, old: 79.90 };
+  let selectedKit = { id: '1', price: 79.90, old: 119.90 };
   const selectedPriceEl = document.getElementById('selectedPrice');
   const stickyPriceEl = document.getElementById('stickyPrice');
   const summaryKitLabel = document.getElementById('summaryKitLabel');
