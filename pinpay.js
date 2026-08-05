@@ -51,7 +51,7 @@ async function createPixCharge({ orderId, amountInCents, description, customer, 
 }
 
 async function getPixStatus(pixId) {
-  const res = await fetch(`${BASE_URL}/pix/${pixId}`, {
+  const res = await fetch(`${BASE_URL}/transactions/${pixId}`, {
     headers: authHeaders(),
     signal: AbortSignal.timeout(10000)
   });
@@ -60,6 +60,7 @@ async function getPixStatus(pixId) {
     const err = await readJsonSafe(res);
     const error = new Error(err.message || 'Falha ao consultar status PIX');
     error.status = res.status;
+    error.details = err;
     throw error;
   }
   return res.json();

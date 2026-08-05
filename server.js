@@ -116,7 +116,7 @@ app.get('/api/pix/status/:id', async (req, res) => {
     if (local) local.status = pix.status;
     res.json({ status: pix.status });
   } catch (err) {
-    console.error('Erro ao consultar status PIX:', err.status, err.message);
+    console.error('Erro ao consultar status PIX:', err.status, err.details || err.message);
     res.status(502).json({ error: 'Não foi possível consultar o status do pagamento.' });
   }
 });
