@@ -272,75 +272,114 @@
   <div class="modal__panel">
     <button class="modal__close" data-close>✕</button>
 
-    <!-- STEP 1: dados -->
-    <div id="stepForm" class="modal__step">
-      <h3>Finalizar pedido</h3>
-      <p class="muted" id="modalKitSummary">2 Unidades — R$ 126,00 no PIX</p>
-
-      <form id="checkoutForm">
-        <label>Nome completo
-          <input type="text" name="name" required placeholder="Seu nome completo">
-        </label>
-        <label>E-mail
-          <input type="email" name="email" required placeholder="seuemail@exemplo.com">
-        </label>
-        <label>CPF
-          <input type="text" name="cpf" required placeholder="000.000.000-00" maxlength="14">
-        </label>
-        <label>Telefone / WhatsApp
-          <input type="tel" name="phone" required placeholder="(00) 00000-0000">
-        </label>
-
-        <div class="form-row">
-          <label>CEP
-            <input type="text" name="cep" required placeholder="00000-000">
-          </label>
-          <label>Número
-            <input type="text" name="number" required placeholder="123">
-          </label>
-        </div>
-        <label>Endereço
-          <input type="text" name="address" required placeholder="Rua, avenida...">
-        </label>
-        <div class="form-row">
-          <label>Bairro
-            <input type="text" name="district" required>
-          </label>
-          <label>Cidade
-            <input type="text" name="city" required>
-          </label>
-        </div>
-
-        <button type="submit" class="btn btn--primary btn--full" id="generatePixBtn">
-          Gerar PIX agora
-        </button>
-        <p class="error-msg" id="formError"></p>
-      </form>
+    <div class="checkout-steps" id="checkoutStepsIndicator">
+      <div class="checkout-step is-active" data-step-dot="1"><span>1</span>Seus dados</div>
+      <div class="checkout-step" data-step-dot="2"><span>2</span>Entrega</div>
+      <div class="checkout-step" data-step-dot="3"><span>3</span>Pagamento</div>
     </div>
 
-    <!-- STEP 2: qrcode -->
-    <div id="stepPix" class="modal__step" hidden>
-      <h3>Pague com PIX para confirmar seu pedido</h3>
-      <p class="muted">Escaneie o QR Code ou use o código copia e cola no app do seu banco.</p>
+    <div class="order-summary">
+      <img src="https://files.nuvorafy.com/user-images/34fcbfd7-2e73-4c67-aaae-ef889d0d6a60/1784511082696-xu5cubjmk3r.webp" alt="">
+      <div class="order-summary__info">
+        <strong id="summaryKitLabel">2 Unidades</strong>
+        <span class="muted">Lavadora de Alta Pressão 48V</span>
+      </div>
+      <strong id="summaryPrice">R$ 126,00</strong>
+    </div>
+
+    <!-- STEP 1: contato -->
+    <form id="formContact" class="modal__step" data-step-panel="1">
+      <label>Nome completo
+        <input type="text" name="name" required autocomplete="name" placeholder="Como está no seu documento">
+        <span class="field-error"></span>
+      </label>
+      <label>CPF
+        <input type="text" name="cpf" required inputmode="numeric" autocomplete="off" placeholder="000.000.000-00" maxlength="14">
+        <span class="field-error"></span>
+      </label>
+      <label>WhatsApp
+        <input type="tel" name="phone" required inputmode="numeric" autocomplete="tel" placeholder="(00) 00000-0000" maxlength="15">
+        <span class="field-error"></span>
+      </label>
+      <label>E-mail
+        <input type="email" name="email" required autocomplete="email" placeholder="seuemail@exemplo.com">
+        <span class="field-error"></span>
+      </label>
+
+      <button type="submit" class="btn btn--primary btn--full btn--large">Continuar para entrega →</button>
+      <p class="step-trust">🔒 Seus dados estão protegidos e são usados só para gerar seu pedido</p>
+    </form>
+
+    <!-- STEP 2: entrega -->
+    <form id="formAddress" class="modal__step" data-step-panel="2" hidden>
+      <label>CEP
+        <input type="text" name="cep" required inputmode="numeric" autocomplete="postal-code" placeholder="00000-000" maxlength="9">
+        <span class="field-hint" id="cepHint">Digite o CEP e completamos o endereço pra você</span>
+      </label>
+      <label>Endereço
+        <input type="text" name="address" required placeholder="Rua, avenida...">
+        <span class="field-error"></span>
+      </label>
+      <div class="form-row">
+        <label>Número
+          <input type="text" name="number" required inputmode="numeric" placeholder="123">
+          <span class="field-error"></span>
+        </label>
+        <label>Complemento <span class="optional">(opcional)</span>
+          <input type="text" name="complement" placeholder="Apto, bloco...">
+        </label>
+      </div>
+      <div class="form-row">
+        <label>Bairro
+          <input type="text" name="district" required>
+          <span class="field-error"></span>
+        </label>
+        <label>Cidade
+          <input type="text" name="city" required>
+          <span class="field-error"></span>
+        </label>
+      </div>
+      <input type="hidden" name="state">
+
+      <div class="modal__actions">
+        <button type="button" class="btn btn--secondary" id="backToContact">← Voltar</button>
+        <button type="submit" class="btn btn--primary" id="generatePixBtn">Gerar PIX agora</button>
+      </div>
+      <p class="error-msg" id="formError"></p>
+    </form>
+
+    <!-- STEP 3: pix -->
+    <div id="stepPix" class="modal__step" data-step-panel="3" hidden>
+      <h3>Pague com PIX pra confirmar seu pedido</h3>
 
       <div class="pix-box">
+        <div class="pix-timer" id="pixTimer">Código expira em <strong id="pixTimerValue">15:00</strong></div>
         <img id="pixQrImage" src="" alt="QR Code PIX">
         <div class="pix-copy">
           <input type="text" id="pixCopyPaste" readonly>
           <button id="copyPixBtn" class="btn btn--secondary">Copiar código</button>
         </div>
         <p class="pix-value">Valor: <strong id="pixValue">R$ 0,00</strong></p>
-        <p class="pix-status" id="pixStatus">⏳ Aguardando pagamento...</p>
+
+        <ol class="pix-instructions">
+          <li>Abra o app do seu banco</li>
+          <li>Escolha pagar via Pix com QR Code ou copia e cola</li>
+          <li>Confirme o pagamento — a aprovação é automática</li>
+        </ol>
+
+        <p class="pix-status" id="pixStatus"><span class="pulse-dot"></span> Aguardando pagamento...</p>
+        <button type="button" class="btn btn--secondary btn--full" id="checkNowBtn">Já paguei — verificar agora</button>
       </div>
     </div>
 
-    <!-- STEP 3: sucesso -->
-    <div id="stepSuccess" class="modal__step" hidden>
+    <!-- STEP 4: sucesso -->
+    <div id="stepSuccess" class="modal__step" data-step-panel="4" hidden>
       <div class="success">
         <span class="success__icon">✅</span>
         <h3>Pagamento confirmado!</h3>
-        <p>Seu pedido foi recebido e já está sendo preparado para envio. Você receberá o código de rastreio por e-mail.</p>
-        <button class="btn btn--primary" data-close>Fechar</button>
+        <p class="muted">Pedido <strong id="successOrderId"></strong></p>
+        <p>Seu pedido já está sendo preparado para envio. Enviamos a confirmação e o código de rastreio para o seu e-mail.</p>
+        <button class="btn btn--primary btn--full" data-close>Fechar</button>
       </div>
     </div>
   </div>
