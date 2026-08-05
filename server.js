@@ -68,6 +68,8 @@ app.post('/api/pix/create', async (req, res) => {
       checkoutUrl
     });
 
+    console.log('DEBUG pix response:', JSON.stringify(pix));
+
     orders.set(pix.id, {
       orderId,
       kitId,
