@@ -20,7 +20,7 @@ async function readJsonSafe(res) {
 }
 
 // orderId é usado como Idempotency-Key: 1 pedido = 1 cobrança, mesmo em retry de rede.
-async function createPixCharge({ orderId, amountInCents, description, customer, webhookUrl }) {
+async function createPixCharge({ orderId, amountInCents, description, customer, webhookUrl, checkoutUrl }) {
   const res = await fetch(`${BASE_URL}/pix`, {
     method: 'POST',
     headers: { ...authHeaders(), 'Idempotency-Key': orderId },
@@ -35,7 +35,7 @@ async function createPixCharge({ orderId, amountInCents, description, customer, 
       },
       expires_in: 3600,
       webhook_url: webhookUrl || process.env.PINPAY_WEBHOOK_URL,
-      metadata: { external_reference: orderId }
+      metadata: { external_reference: orderId, checkout_url: checkoutUrl }
     }),
     signal: AbortSignal.timeout(30000)
   });

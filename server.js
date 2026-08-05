@@ -5,6 +5,7 @@ const cors = require('cors');
 const { createPixCharge, getPixStatus } = require('./pinpay');
 
 const app = express();
+app.set('trust proxy', true); // Railway fica atrás de proxy — precisa disso pra req.protocol vir "https"
 app.use(cors());
 
 // Preços definidos no servidor (nunca confie no valor vindo do front-end)
@@ -58,11 +59,13 @@ app.post('/api/pix/create', async (req, res) => {
     }
 
     const orderId = crypto.randomUUID();
+    const checkoutUrl = `${req.protocol}://${req.get('host')}/#oferta`;
     const pix = await createPixCharge({
       orderId,
       amountInCents: kit.valueInCents,
       description: `${kit.label} — Lavadora de Alta Pressão Sem Fio 48V Premium`,
-      customer
+      customer,
+      checkoutUrl
     });
 
     orders.set(pix.id, {
