@@ -8,6 +8,20 @@
 
   const money = (n) => n.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
 
+  // ---- Vídeos: só carrega o arquivo quando o usuário clica ----
+  document.querySelectorAll('.video-card').forEach((card) => {
+    card.addEventListener('click', () => {
+      if (card.classList.contains('is-playing')) return;
+      const video = document.createElement('video');
+      video.src = card.dataset.video;
+      video.controls = true;
+      video.autoplay = true;
+      video.playsInline = true;
+      card.querySelector('img').replaceWith(video);
+      card.classList.add('is-playing');
+    });
+  });
+
   // ---- Galeria ----
   const mainImage = document.getElementById('mainImage');
   document.querySelectorAll('.thumb').forEach((thumb) => {
