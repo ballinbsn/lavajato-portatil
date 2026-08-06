@@ -114,6 +114,15 @@
   }
 
   openCheckoutBtn.addEventListener('click', openModal);
+
+  // Botões "Comprar agora" do topo/hero/rodapé sticky abrem o checkout
+  // direto, sem precisar rolar até a oferta e clicar de novo.
+  document.querySelectorAll('.js-open-checkout').forEach((el) => {
+    el.addEventListener('click', (e) => {
+      e.preventDefault();
+      openModal();
+    });
+  });
   modal.querySelectorAll('[data-close]').forEach((el) => el.addEventListener('click', closeModal));
 
   // ---- Máscaras de campo ----
